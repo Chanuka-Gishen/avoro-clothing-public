@@ -1,7 +1,7 @@
 import {
   OrderActivity,
   OrderActivityType,
-} from "@/features/orders/types/order.types";
+} from "@/features/orders/types/order-activity.types";
 import {
   Ban,
   CircleDollarSign,

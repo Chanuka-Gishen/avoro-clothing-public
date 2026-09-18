@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 import { useOrderActivities } from "@/features/orders/hooks/use-orders";
-import type {
+import {
   OrderActivity,
   OrderActivityType,
 } from "@/features/orders/types/order-activity.types";
