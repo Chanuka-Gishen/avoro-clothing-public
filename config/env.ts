@@ -6,7 +6,7 @@ if (!apiBaseUrl) {
 
 export const env = {
   apiBaseUrl,
-  appName: process.env.NEXT_PUBLIC_APP_NAME ?? "Furniture Store",
+  appName: process.env.NEXT_PUBLIC_APP_NAME ?? "Clothing Store",
   currency: process.env.NEXT_PUBLIC_CURRENCY ?? "LKR",
   locale: process.env.NEXT_PUBLIC_LOCALE ?? "en-LK",
 } as const;
