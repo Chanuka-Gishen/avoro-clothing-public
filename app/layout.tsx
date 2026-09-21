@@ -1,39 +1,90 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 
 import { Providers } from "./providers";
 
 import "./globals.css";
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://avoro.lk"),
+const SITE_URL = "https://avoro.lk";
 
-  title: "AVORO | Coming Soon",
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+
+  title: {
+    default: "AVORO | Clothing for the Unbound",
+    template: "%s | AVORO",
+  },
+
   description:
-    "AVORO is coming soon. Premium streetwear designed for those who move differently.",
+    "Discover AVORO streetwear - premium clothing designed for those who move beyond convention. Clothing for the unbound.",
+
+  applicationName: "AVORO",
+
+  keywords: [
+    "AVORO",
+    "AVORO clothing",
+    "streetwear Sri Lanka",
+    "Sri Lankan streetwear",
+    "oversized t-shirts",
+    "baggy t-shirts",
+    "premium streetwear",
+    "clothing Sri Lanka",
+  ],
+
+  authors: [{ name: "AVORO" }],
+  creator: "AVORO",
+  publisher: "AVORO",
+
+  alternates: {
+    canonical: "/",
+  },
 
   openGraph: {
-    title: "AVORO | Coming Soon",
-    description: "Premium streetwear. Built differently. AVORO is coming soon.",
-    url: "https://avoro.lk",
+    type: "website",
+    locale: "en_LK",
+    url: SITE_URL,
     siteName: "AVORO",
+    title: "AVORO | Clothing for the Unbound",
+    description:
+      "Premium streetwear designed for those who move beyond convention. Clothing for the unbound.",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "AVORO — Coming Soon",
+        alt: "AVORO — Clothing for the Unbound",
       },
     ],
-    type: "website",
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "AVORO | Coming Soon",
-    description: "Premium streetwear. Built differently. AVORO is coming soon.",
-    images: ["/og-image.jpg"],
+    title: "AVORO | Clothing for the Unbound",
+    description:
+      "Premium streetwear designed for those who move beyond convention.",
+    images: ["/og-image.png"],
   },
+
+  robots: {
+    index: true,
+    follow: true,
+
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+
+  category: "fashion",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#ffffff",
 };
 
 interface RootLayoutProps {
