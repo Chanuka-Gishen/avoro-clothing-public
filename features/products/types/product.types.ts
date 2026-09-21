@@ -10,43 +10,95 @@ export interface ProductImage {
   updatedAt: string;
 }
 
-export interface ProductDimension {
-  id: string;
-  length?: number | null;
-  width?: number | null;
-  height?: number | null;
-  unit: string;
-}
-
-export interface ProductMaterial {
+export interface ProductCategory {
   id: string;
   name: string;
   slug: string;
-  description?: string | null;
 }
 
-export interface ProductVariant {
+export interface Color {
   id: string;
-  sku: string;
   name: string;
+  code: string;
+  hexCode: string;
+  order: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 
-  price: number;
-  comparePrice?: number | null;
+export interface Size {
+  id: string;
+  name: string;
+  code: string;
+  order: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 
-  quantity: number;
+export interface ProductColor {
+  id: string;
 
-  colors: string[];
-  colorHexCodes: string[];
+  productId: string;
 
-  isOrderable: boolean;
-  isMadeToOrder: boolean;
+  colorId: string;
+  color: Color;
 
-  productionDaysMin?: number | null;
-  productionDaysMax?: number | null;
+  isActive: boolean;
 
   images: ProductImage[];
 
   createdAt: string;
+  updatedAt: string;
+}
+
+export interface BaseProduct {
+  id: string;
+  name: string;
+  code: string;
+
+  description: string | null;
+
+  material: string | null;
+  fabricComposition: string | null;
+  gsm: number | null;
+  fit: string | null;
+
+  sizeChartImage: string | null;
+  sizeChartImageKey: string | null;
+
+  isActive: boolean;
+
+  variants?: BaseProductVariant[];
+
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BaseProductVariant {
+  id: string;
+  baseProductId: string;
+
+  colorId: string;
+  color: Color;
+
+  sizeId: string;
+  size: Size;
+
+  sku: string;
+  barcode: string | null;
+
+  inventoryCostPrice: string | null;
+
+  quantity: number;
+  reservedQuantity: number;
+  reorderLevel: number;
+
+  isActive: boolean;
+
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Product {
@@ -57,27 +109,29 @@ export interface Product {
   description: string;
 
   sku: string;
-  barcode?: string | null;
+  barcode: string | null;
 
   price: number;
-  comparePrice?: number | null;
+  costPrice: number;
+  comparePrice: number | null;
 
   isActive: boolean;
   isFeatured: boolean;
 
-  category: Category;
-  material: ProductMaterial;
+  categoryId: string;
+  category: ProductCategory;
 
-  dimensions?: ProductDimension | null;
+  baseProductId: string;
+  baseProduct: BaseProduct;
 
+  colors: ProductColor[];
   images: ProductImage[];
-  variants: ProductVariant[];
 
-  metaTitle?: string | null;
-  metaDescription?: string | null;
+  metaTitle: string | null;
+  metaDescription: string | null;
   metaTags: string[];
 
-  careInstructions?: string | null;
+  careInstructions: string | null;
 
   createdAt: string;
   updatedAt: string;
@@ -112,31 +166,33 @@ export interface ProductSummary {
   id: string;
   name: string;
   slug: string;
+  sku: string;
 
   price: number;
-  comparePrice?: number | null;
+  comparePrice: number | null;
 
-  image?: ProductImage | null;
+  isActive: boolean;
+  isFeatured: boolean;
 
-  category?: {
+  category: {
     id: string;
     name: string;
     slug: string;
   };
 
-  images: Pick<ProductImage, "id" | "url" | "alt">[];
+  baseProduct: {
+    id: string;
+    name: string;
+    code: string;
+    material: string | null;
+    gsm: number | null;
+    fit: string | null;
+  };
 
-  isFeatured: boolean;
+  images: ProductImage[];
 
-  variants: Pick<
-    ProductVariant,
-    | "id"
-    | "name"
-    | "colors"
-    | "colorHexCodes"
-    | "price"
-    | "quantity"
-    | "isOrderable"
-    | "isMadeToOrder"
-  >[];
+  colors: ProductColor[];
+
+  createdAt: string;
+  updatedAt: string;
 }
