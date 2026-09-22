@@ -1,49 +1,25 @@
 "use client";
 
-import { Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
-import { routePaths, ROUTES } from "@/config/routes";
-import { useAuthStore } from "@/features/auth/store/auth.store";
+import { routePaths } from "@/config/routes";
 import type { ProductSummary } from "@/features/products/types/product.types";
 import { calculateDiscountPercentage } from "@/features/products/utils/product.utils";
-import {
-  useAddWishlistItem,
-  useRemoveWishlistItem,
-  useWishlist,
-} from "@/features/wishlist/hooks/use-wishlist";
 
 import { ProductPrice } from "./product-price";
+import { WishlistButton } from "../wishlist/wishlist-button";
+import { toWishlistItem } from "@/lib/utils/common.utils";
 
 interface ProductCardProps {
   product: ProductSummary;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const router = useRouter();
-
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const isInitialized = useAuthStore((state) => state.isInitialized);
-
-  const { data: wishlistData } = useWishlist();
-
-  const addWishlistItem = useAddWishlistItem();
-  const removeWishlistItem = useRemoveWishlistItem();
-
   const discount = calculateDiscountPercentage(
     product.price,
     product.comparePrice,
   );
-
-  const wishlist = wishlistData?.response;
-
-  const isWishlisted =
-    wishlist?.items.some((item) => item.product?.id === product.id) ?? false;
-
-  const isWishlistPending =
-    addWishlistItem.isPending || removeWishlistItem.isPending;
 
   const primaryImage =
     product.images?.[0] ??
@@ -55,30 +31,6 @@ export function ProductCard({ product }: ProductCardProps) {
     (product.colors?.length ?? 0) - visibleColors.length,
     0,
   );
-
-  async function handleWishlistClick() {
-    if (!isInitialized || isWishlistPending) {
-      return;
-    }
-
-    if (!isAuthenticated) {
-      router.push(ROUTES.LOGIN);
-      return;
-    }
-
-    try {
-      if (isWishlisted) {
-        await removeWishlistItem.mutateAsync(product.id);
-        return;
-      }
-
-      await addWishlistItem.mutateAsync({
-        productId: product.id,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }
 
   return (
     <article className="group">
@@ -116,27 +68,11 @@ export function ProductCard({ product }: ProductCardProps) {
         )}
 
         {/* Wishlist */}
-        <button
-          type="button"
-          onClick={handleWishlistClick}
-          disabled={!isInitialized || isWishlistPending}
-          aria-pressed={isWishlisted}
-          aria-label={
-            isWishlisted
-              ? `Remove ${product.name} from wishlist`
-              : `Add ${product.name} to wishlist`
-          }
+        <WishlistButton
+          product={toWishlistItem(product)}
+          variant="icon"
           className="absolute right-3 top-3 flex size-9 items-center justify-center text-neutral-950 transition-all duration-300 hover:scale-110 disabled:cursor-not-allowed disabled:opacity-40 sm:right-4 sm:top-4"
-        >
-          <Heart
-            strokeWidth={1.4}
-            className={`size-[19px] transition-all duration-300 ${
-              isWishlisted
-                ? "fill-neutral-950 text-neutral-950"
-                : "fill-transparent text-neutral-950"
-            }`}
-          />
-        </button>
+        />
       </div>
 
       {/* Product information */}

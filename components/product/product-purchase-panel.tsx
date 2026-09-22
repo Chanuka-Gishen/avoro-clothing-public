@@ -7,6 +7,7 @@ import { useAddCartItem } from "@/features/cart/hooks/use-cart";
 import { QuantitySelector } from "./quantity-selector";
 import { WishlistButton } from "../wishlist/wishlist-button";
 import { SizeGuideModal } from "./size-guide-modal";
+import { toWishlistItem } from "@/lib/utils/common.utils";
 
 interface ProductPurchasePanelProps {
   product: Product;
@@ -288,11 +289,9 @@ export function ProductPurchasePanel({
                   : "Add to bag"}
         </button>
 
-        <WishlistButton
-          productId={product.id}
-          productName={product.name}
-          variant="icon"
-        />
+        <div className="absolute right-3 top-3 z-10 sm:right-4 sm:top-4"></div>
+
+        <WishlistButton product={toWishlistItem(product)} variant="icon" />
 
         {product.baseProduct.sizeChartImage && (
           <SizeGuideModal
