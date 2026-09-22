@@ -9,6 +9,10 @@ export interface Category {
 
   parentId?: string | null;
 
+  metaTitle: string | null;
+  metaDescription: string | null;
+  metaTags: string[];
+
   isActive: boolean;
 
   createdAt: string;

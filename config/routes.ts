@@ -24,6 +24,7 @@ export const ROUTES = {
 export const routePaths = {
   product: (slug: string) => `/products/${slug}`,
   category: (slug: string) => `/categories/${slug}`,
+  collection: (slug: string) => `/collections/${slug}`,
   order: (id: string) => `/account/orders/${id}`,
   shopCategory: (slug: string) => `/shop?category=${encodeURIComponent(slug)}`,
   orderConfirmation: (id: string) => `/order-confirmation/${id}`,
