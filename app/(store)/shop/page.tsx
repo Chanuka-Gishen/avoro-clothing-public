@@ -1,5 +1,3 @@
-// src/app/(store)/shop/page.tsx
-
 import { ProductGrid } from "@/components/product/product-grid";
 import { Pagination } from "@/components/shop/pagination";
 import { ShopFilters } from "@/components/shop/shop-filters";
@@ -7,18 +5,16 @@ import { ShopSearch } from "@/components/shop/shop-search";
 import { ShopToolbar } from "@/components/shop/shop-toolbar";
 
 import { getCategories } from "@/features/categories/api/category.api";
-import { getMaterials } from "@/features/materials/api/material.api";
 import { getProducts } from "@/features/products/api/product.api";
 import { parseProductSort } from "@/features/products/utils/product-sort.utils";
 
 interface ShopPageProps {
   searchParams: Promise<{
-    page?: string;
     search?: string;
     category?: string;
-    material?: string;
     minPrice?: string;
     maxPrice?: string;
+    page?: string;
     sort?: string;
   }>;
 }
@@ -29,31 +25,25 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   const page = Math.max(Number(params.page) || 1, 1);
   const sort = parseProductSort(params.sort);
 
-  const [productsResult, categoriesResult, materialsResult] = await Promise.all(
-    [
-      getProducts({
-        page,
-        limit: 12,
-        search: params.search,
-        categorySlug: params.category,
-        materialSlug: params.material,
-        minPrice: params.minPrice ? Number(params.minPrice) : undefined,
-        maxPrice: params.maxPrice ? Number(params.maxPrice) : undefined,
-        sort,
-      }),
+  const [productsResult, categoriesResult] = await Promise.all([
+    getProducts({
+      search: params.search,
+      categorySlug: params.category,
+      minPrice: params.minPrice ? Number(params.minPrice) : undefined,
+      maxPrice: params.maxPrice ? Number(params.maxPrice) : undefined,
+      sort,
+      page,
+      limit: 12,
+    }),
 
-      getCategories(),
-
-      getMaterials(),
-    ],
-  );
+    getCategories(),
+  ]);
 
   const products = productsResult.response?.data ?? [];
 
   const meta = productsResult.response?.meta;
 
   const categories = categoriesResult.response ?? [];
-  const materials = materialsResult.response ?? [];
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -65,11 +55,11 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-neutral-950 sm:text-4xl">
           {params.search
             ? `Search results for "${params.search}"`
-            : "Shop Furniture"}
+            : "Avoro Clothing"}
         </h1>
 
         <p className="mt-3 max-w-2xl text-neutral-500">
-          Explore our collection of furniture designed for modern living.
+          Explore our collection of Clothing.
         </p>
       </div>
 
@@ -82,13 +72,12 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
           total={meta?.total ?? products.length}
           sort={sort}
           categories={categories}
-          materials={materials}
         />
       </div>
 
       <div className="mt-8 grid gap-10 lg:grid-cols-[240px_1fr]">
         <aside className="hidden lg:block">
-          <ShopFilters categories={categories} materials={materials} />
+          <ShopFilters categories={categories} />
         </aside>
 
         <div>

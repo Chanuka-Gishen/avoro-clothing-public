@@ -1,5 +1,3 @@
-// src/components/shop/mobile-filters.tsx
-
 "use client";
 
 import { SlidersHorizontal, X } from "lucide-react";
@@ -8,14 +6,12 @@ import { useState } from "react";
 import type { Category } from "@/features/categories/types/category.types";
 
 import { ShopFilters } from "./shop-filters";
-import { Material } from "@/features/materials/types/material.types";
 
 interface MobileFiltersProps {
   categories: Category[];
-  materials: Material[];
 }
 
-export function MobileFilters({ categories, materials }: MobileFiltersProps) {
+export function MobileFilters({ categories }: MobileFiltersProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -57,7 +53,6 @@ export function MobileFilters({ categories, materials }: MobileFiltersProps) {
             <div className="flex-1 overflow-y-auto px-5 py-6">
               <ShopFilters
                 categories={categories}
-                materials={materials}
                 onFilterChange={() => setOpen(false)}
               />
             </div>

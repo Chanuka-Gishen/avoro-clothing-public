@@ -4,6 +4,7 @@ import { buildQueryParams } from "@/lib/api/query-params";
 import type { Product, ProductListParams } from "../types/product.types";
 
 import type { ApiResponse, PaginatedResponse } from "@/types/api.types";
+import { cache } from "react";
 
 export async function getProducts(
   params: ProductListParams = {},
@@ -17,13 +18,19 @@ export async function getProducts(
     minPrice: params.minPrice,
     maxPrice: params.maxPrice,
     isFeatured: params.isFeatured,
-    sort: params.sort,
+    sortBy: params.sort,
   });
 
   return serverFetch<PaginatedResponse<Product>>(`/products${query}`, {
     cache: "no-store",
   });
 }
+
+export const getCachedProductBySlug = cache(async (slug: string) => {
+  const result = await getProductBySlug(slug);
+
+  return result.response ?? null;
+});
 
 export async function getProductBySlug(
   slug: string,

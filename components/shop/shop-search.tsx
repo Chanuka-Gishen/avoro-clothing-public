@@ -8,9 +8,7 @@ interface ShopSearchProps {
   placeholder?: string;
 }
 
-export function ShopSearch({
-  placeholder = "Search furniture...",
-}: ShopSearchProps) {
+export function ShopSearch({ placeholder = "Search ..." }: ShopSearchProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();

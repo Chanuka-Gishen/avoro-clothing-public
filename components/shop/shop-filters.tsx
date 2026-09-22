@@ -1,24 +1,16 @@
-// src/components/shop/shop-filters.tsx
-
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import type { Category } from "@/features/categories/types/category.types";
-import { Material } from "@/features/materials/types/material.types";
 
 interface ShopFiltersProps {
   categories: Category[];
-  materials: Material[];
   onFilterChange?: () => void;
 }
 
-export function ShopFilters({
-  categories,
-  materials,
-  onFilterChange,
-}: ShopFiltersProps) {
+export function ShopFilters({ categories, onFilterChange }: ShopFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -28,7 +20,6 @@ export function ShopFilters({
   const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") ?? "");
 
   const selectedCategory = searchParams.get("category");
-  const selectedMaterial = searchParams.get("material");
 
   function updateParams(updates: Record<string, string | null>) {
     const params = new URLSearchParams(searchParams.toString());
@@ -56,12 +47,6 @@ export function ShopFilters({
     });
   }
 
-  function handleMaterialChange(slug: string | null) {
-    updateParams({
-      material: slug,
-    });
-  }
-
   function handlePriceSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -75,7 +60,6 @@ export function ShopFilters({
     const params = new URLSearchParams(searchParams.toString());
 
     params.delete("category");
-    params.delete("material");
     params.delete("minPrice");
     params.delete("maxPrice");
     params.delete("page");
@@ -90,7 +74,6 @@ export function ShopFilters({
 
   const hasFilters =
     Boolean(selectedCategory) ||
-    Boolean(selectedMaterial) ||
     Boolean(searchParams.get("minPrice")) ||
     Boolean(searchParams.get("maxPrice"));
 
@@ -138,41 +121,6 @@ export function ShopFilters({
               />
 
               <span className="text-sm text-neutral-700">{category.name}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      <div className="border-t border-neutral-200 pt-8">
-        <h3 className="text-sm font-semibold text-neutral-950">Materials</h3>
-
-        <div className="mt-4 space-y-3">
-          <label className="flex cursor-pointer items-center gap-3">
-            <input
-              type="radio"
-              name="material"
-              checked={!selectedMaterial}
-              onChange={() => handleMaterialChange(null)}
-              className="size-4 accent-neutral-950"
-            />
-
-            <span className="text-sm text-neutral-700">All materials</span>
-          </label>
-
-          {materials.map((material) => (
-            <label
-              key={material.id}
-              className="flex cursor-pointer items-center gap-3"
-            >
-              <input
-                type="radio"
-                name="material"
-                checked={selectedMaterial === material.slug}
-                onChange={() => handleMaterialChange(material.slug)}
-                className="size-4 accent-neutral-950"
-              />
-
-              <span className="text-sm text-neutral-700">{material.name}</span>
             </label>
           ))}
         </div>
