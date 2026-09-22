@@ -8,6 +8,10 @@ export async function getCategories(): Promise<ApiResponse<Category[]>> {
   return serverFetch<Category[]>("/categories/find");
 }
 
+export async function getCategoriesSeoInfo(): Promise<ApiResponse<Category[]>> {
+  return serverFetch<Category[]>("/categories/seo");
+}
+
 export const getCachedCategoryBySlug = cache(async (slug: string) => {
   const result = await getCategoryBySlug(slug);
 

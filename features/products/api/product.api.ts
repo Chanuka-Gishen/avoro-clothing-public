@@ -26,6 +26,12 @@ export async function getProducts(
   });
 }
 
+export async function getProductsSeoInfo(): Promise<ApiResponse<Product[]>> {
+  return serverFetch<Product[]>(`/products/seo`, {
+    cache: "no-store",
+  });
+}
+
 export const getCachedProductBySlug = cache(async (slug: string) => {
   const result = await getProductBySlug(slug);
 
