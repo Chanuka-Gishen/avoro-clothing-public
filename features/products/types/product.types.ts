@@ -66,11 +66,10 @@ export interface BaseProduct {
   fit: string | null;
 
   sizeChartImage: string | null;
-  sizeChartImageKey: string | null;
 
   isActive: boolean;
 
-  variants?: BaseProductVariant[];
+  variants: BaseProductVariant[];
 
   createdAt: string;
   updatedAt: string;
@@ -91,9 +90,8 @@ export interface BaseProductVariant {
 
   inventoryCostPrice: string | null;
 
-  quantity: number;
-  reservedQuantity: number;
-  reorderLevel: number;
+  availableQuantity: number;
+  inStock: boolean;
 
   isActive: boolean;
 

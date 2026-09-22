@@ -6,6 +6,7 @@ import { Product } from "@/features/products/types/product.types";
 import { useAddCartItem } from "@/features/cart/hooks/use-cart";
 import { QuantitySelector } from "./quantity-selector";
 import { WishlistButton } from "../wishlist/wishlist-button";
+import { SizeGuideModal } from "./size-guide-modal";
 
 interface ProductPurchasePanelProps {
   product: Product;
@@ -26,6 +27,8 @@ export function ProductPurchasePanel({
 }: ProductPurchasePanelProps) {
   const [quantity, setQuantity] = useState(1);
 
+  const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
+
   const addCartItemMutation = useAddCartItem();
 
   const activeColors = useMemo(
@@ -43,29 +46,20 @@ export function ProductPurchasePanel({
       return [];
     }
 
-    return product.baseProduct
-      .variants!.filter(
-        (variant) =>
-          variant.isActive && variant.colorId === selectedProductColor.colorId,
-      )
+    return product.baseProduct.variants
+      .filter((variant) => variant.colorId === selectedProductColor.color.id)
       .sort((a, b) => a.size.order - b.size.order);
   }, [product.baseProduct.variants, selectedProductColor]);
 
   const selectedVariant =
     colorVariants.find((variant) => variant.id === selectedVariantId) ?? null;
 
-  const availableQuantity = selectedVariant
-    ? Math.max(selectedVariant.quantity - selectedVariant.reservedQuantity, 0)
-    : 0;
-
   const selectedVariantOutOfStock =
-    selectedVariant !== null && availableQuantity <= 0;
+    selectedVariant !== null &&
+    (!selectedVariant.inStock || selectedVariant.availableQuantity <= 0);
 
   const cannotAddToCart =
-    addCartItemMutation.isPending ||
-    !selectedProductColor ||
-    !selectedVariant ||
-    selectedVariantOutOfStock;
+    addCartItemMutation.isPending || !selectedProductColor || !selectedVariant;
 
   function handleColorSelect(productColorId: string) {
     onColorChange(productColorId);
@@ -73,15 +67,9 @@ export function ProductPurchasePanel({
   }
 
   function handleVariantSelect(variantId: string) {
-    const variant = colorVariants.find((item) => item.id === variantId);
+    const variant = colorVariants.find((variant) => variant.id === variantId);
 
-    if (!variant) {
-      return;
-    }
-
-    const stock = Math.max(variant.quantity - variant.reservedQuantity, 0);
-
-    if (stock <= 0) {
+    if (!variant || !variant.inStock) {
       return;
     }
 
@@ -169,13 +157,22 @@ export function ProductPurchasePanel({
 
       <div className="mt-8">
         <div className="flex items-center justify-between gap-6">
-          <h2 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-950">
-            Size
-          </h2>
+          <div className="flex items-center gap-3">
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-950">
+              Size
+            </h2>
+
+            {selectedVariant && (
+              <span className="text-[10px] uppercase tracking-[0.12em] text-neutral-400">
+                {selectedVariant.size.name}
+              </span>
+            )}
+          </div>
 
           {product.baseProduct.sizeChartImage && (
             <button
               type="button"
+              onClick={() => setSizeGuideOpen(true)}
               className="border-b border-neutral-400 pb-0.5 text-[10px] font-medium uppercase tracking-[0.14em] text-neutral-500 transition-colors hover:border-neutral-950 hover:text-neutral-950"
             >
               Size guide
@@ -188,16 +185,10 @@ export function ProductPurchasePanel({
             Select a color to view available sizes.
           </p>
         ) : colorVariants.length > 0 ? (
-          <div className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-5">
+          <div className="mt-4 flex flex-wrap gap-2">
             {colorVariants.map((variant) => {
               const selected = variant.id === selectedVariantId;
-
-              const stock = Math.max(
-                variant.quantity - variant.reservedQuantity,
-                0,
-              );
-
-              const outOfStock = stock <= 0;
+              const outOfStock = !variant.inStock;
 
               return (
                 <button
@@ -206,21 +197,25 @@ export function ProductPurchasePanel({
                   disabled={outOfStock}
                   onClick={() => handleVariantSelect(variant.id)}
                   aria-pressed={selected}
-                  aria-label={`Select size ${variant.size.name}`}
-                  className={`relative flex h-12 items-center justify-center border text-xs font-medium uppercase tracking-[0.08em] transition-colors duration-200 ${
+                  aria-label={
+                    outOfStock
+                      ? `${variant.size.name} - out of stock`
+                      : `Select size ${variant.size.name}`
+                  }
+                  className={`relative flex h-12 min-w-14 items-center justify-center border px-4 text-[11px] font-medium uppercase tracking-[0.08em] transition-all duration-200 ${
                     selected
                       ? "border-neutral-950 bg-neutral-950 text-white"
                       : outOfStock
                         ? "cursor-not-allowed border-neutral-200 text-neutral-300"
-                        : "border-neutral-300 text-neutral-950 hover:border-neutral-950"
+                        : "border-neutral-300 bg-white text-neutral-950 hover:border-neutral-950"
                   }`}
                 >
                   {variant.size.name}
 
                   {outOfStock && (
                     <span
-                      className="pointer-events-none absolute left-1/2 top-1/2 h-px w-8 -translate-x-1/2 -translate-y-1/2 -rotate-45 bg-neutral-300"
                       aria-hidden="true"
+                      className="pointer-events-none absolute left-1/2 top-1/2 h-px w-8 -translate-x-1/2 -translate-y-1/2 -rotate-45 bg-neutral-300"
                     />
                   )}
                 </button>
@@ -229,42 +224,42 @@ export function ProductPurchasePanel({
           </div>
         ) : (
           <p className="mt-4 text-xs text-neutral-400">
-            No sizes are currently available for this color.
+            No sizes are available for this color.
           </p>
+        )}
+
+        {selectedVariant && (
+          <div className="mt-3">
+            {selectedVariant.inStock &&
+            selectedVariant.availableQuantity > 0 ? (
+              <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-neutral-500">
+                In stock
+                {selectedVariant.availableQuantity <= 5 && (
+                  <>
+                    {" "}
+                    · Only {selectedVariant.availableQuantity}{" "}
+                    {selectedVariant.availableQuantity === 1
+                      ? "piece"
+                      : "pieces"}{" "}
+                    left
+                  </>
+                )}
+              </p>
+            ) : (
+              <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-neutral-400">
+                Out of stock
+              </p>
+            )}
+          </div>
         )}
       </div>
 
-      {/* Selected option */}
-      {selectedVariant && (
-        <div className="mt-5 flex items-center gap-2">
-          {availableQuantity > 0 ? (
-            <>
-              <Check
-                className="size-3.5 text-neutral-700"
-                strokeWidth={1.5}
-                aria-hidden="true"
-              />
-
-              <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-neutral-500">
-                In stock
-                {availableQuantity <= 5 && ` · Only ${availableQuantity} left`}
-              </p>
-            </>
-          ) : (
-            <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-neutral-400">
-              Out of stock
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* Purchase */}
       <div className="mt-8 flex gap-2">
         <QuantitySelector
           value={quantity}
           max={
-            selectedVariant && availableQuantity > 0
-              ? availableQuantity
+            selectedVariant?.inStock
+              ? selectedVariant.availableQuantity
               : undefined
           }
           onChange={setQuantity}
@@ -298,6 +293,15 @@ export function ProductPurchasePanel({
           productName={product.name}
           variant="icon"
         />
+
+        {product.baseProduct.sizeChartImage && (
+          <SizeGuideModal
+            open={sizeGuideOpen}
+            image={product.baseProduct.sizeChartImage}
+            productName={product.name}
+            onClose={() => setSizeGuideOpen(false)}
+          />
+        )}
       </div>
     </div>
   );

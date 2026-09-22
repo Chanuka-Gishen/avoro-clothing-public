@@ -108,7 +108,7 @@ export function ProductInfo({
       {product.careInstructions && (
         <div className="border-t border-black/10 py-6">
           <h2 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-950">
-            Care
+            Care Instructions
           </h2>
 
           <p className="mt-3 max-w-lg whitespace-pre-line text-sm leading-6 text-neutral-500">
