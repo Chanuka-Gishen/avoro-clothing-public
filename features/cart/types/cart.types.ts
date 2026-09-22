@@ -1,7 +1,4 @@
-import type {
-  ProductImage,
-  ProductVariant,
-} from "@/features/products/types/product.types";
+import type { ProductImage } from "@/features/products/types/product.types";
 
 export interface CartProduct {
   id: string;
@@ -18,9 +15,6 @@ export interface CartItem {
   productId: string;
   product: CartProduct;
 
-  variantId?: string | null;
-  variant?: ProductVariant | null;
-
   createdAt: string;
   updatedAt: string;
 }
@@ -36,6 +30,7 @@ export interface Cart {
 
 export interface AddCartItemPayload {
   productId: string;
+  productColorId: string;
   variantId?: string;
   quantity: number;
 }

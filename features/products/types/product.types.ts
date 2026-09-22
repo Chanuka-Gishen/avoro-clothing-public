@@ -149,7 +149,7 @@ export interface ProductListParams {
   minPrice?: number;
   maxPrice?: number;
 
-  featured?: boolean;
+  isFeatured?: boolean;
 
   sort?: ProductSort;
 }

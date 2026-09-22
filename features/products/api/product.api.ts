@@ -16,7 +16,7 @@ export async function getProducts(
     material: params.materialSlug,
     minPrice: params.minPrice,
     maxPrice: params.maxPrice,
-    featured: params.featured,
+    isFeatured: params.isFeatured,
     sort: params.sort,
   });
 
@@ -35,7 +35,7 @@ export async function getFeaturedProducts(limit = 8) {
   return getProducts({
     page: 1,
     limit,
-    featured: true,
+    isFeatured: true,
   });
 }
 

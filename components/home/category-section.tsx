@@ -16,7 +16,7 @@ export function CategorySection({ categories }: CategorySectionProps) {
 
   return (
     <section
-      className="mx-auto max-w-[1600px] px-5 py-20 sm:px-8 lg:px-12 lg:py-28 xl:px-16"
+      className="mx-auto max-w-[1600px] px-5 py-20 sm:px-8 lg:px-12 lg:py-8 xl:px-16"
       aria-labelledby="categories-heading"
     >
       <div className="flex items-end justify-between gap-6">

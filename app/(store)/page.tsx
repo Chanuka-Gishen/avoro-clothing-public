@@ -15,7 +15,7 @@ export default async function HomePage() {
     getProducts({
       page: 1,
       limit: 8,
-      featured: true,
+      isFeatured: true,
     }),
 
     getProducts({
