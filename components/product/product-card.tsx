@@ -34,7 +34,6 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <article className="group">
-      {/* Product visual */}
       <div className="relative overflow-hidden bg-[#f3f3f1]">
         <Link
           href={routePaths.product(product.slug)}
@@ -60,14 +59,12 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
         </Link>
 
-        {/* Discount */}
         {discount !== null && (
           <span className="absolute left-0 top-0 bg-neutral-950 px-3 py-2 text-[9px] font-semibold uppercase tracking-[0.16em] text-white sm:px-4 sm:text-[10px]">
             {discount}% off
           </span>
         )}
 
-        {/* Wishlist */}
         <WishlistButton
           product={toWishlistItem(product)}
           variant="icon"
@@ -75,38 +72,32 @@ export function ProductCard({ product }: ProductCardProps) {
         />
       </div>
 
-      {/* Product information */}
       <div className="pt-4">
-        <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0">
-            {product.category && (
-              <Link
-                href={routePaths.category(product.category.slug)}
-                className="mb-1.5 block w-fit text-[9px] font-medium uppercase tracking-[0.22em] text-neutral-400 transition-colors hover:text-neutral-950 sm:text-[10px]"
-              >
-                {product.category.name}
-              </Link>
-            )}
+        <div>
+          <Link href={routePaths.product(product.slug)} className="block">
+            <h3 className="text-[13px] font-medium uppercase leading-5 tracking-[0.04em] text-neutral-950 transition-opacity duration-300 group-hover:opacity-60 sm:text-sm">
+              {product.name}
+            </h3>
+          </Link>
 
-            <Link
-              href={routePaths.product(product.slug)}
-              className="block w-fit"
-            >
-              <h3 className="text-[13px] font-medium uppercase leading-5 tracking-[0.04em] text-neutral-950 transition-opacity duration-300 group-hover:opacity-60 sm:text-sm">
-                {product.name}
-              </h3>
-            </Link>
-          </div>
-
-          <div className="shrink-0 text-right">
+          <div className="mt-1">
             <ProductPrice
               price={product.price}
               comparePrice={product.comparePrice}
+              discount={discount}
             />
           </div>
+
+          {product.category && (
+            <Link
+              href={routePaths.collection(product.category.slug)}
+              className="mt-1.5 block w-fit text-[9px] font-medium uppercase tracking-[0.22em] text-neutral-400 transition-colors hover:text-neutral-950 sm:text-[10px]"
+            >
+              {product.category.name}
+            </Link>
+          )}
         </div>
 
-        {/* Product details */}
         {(product.baseProduct?.fit || product.baseProduct?.gsm) && (
           <p className="mt-1.5 text-[10px] uppercase tracking-[0.12em] text-neutral-400">
             {[
@@ -120,7 +111,6 @@ export function ProductCard({ product }: ProductCardProps) {
           </p>
         )}
 
-        {/* Colors */}
         {!!visibleColors.length && (
           <div
             className="mt-3 flex items-center gap-2"

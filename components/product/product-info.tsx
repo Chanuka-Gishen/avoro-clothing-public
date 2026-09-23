@@ -3,6 +3,7 @@ import { Product } from "@/features/products/types/product.types";
 import Link from "next/link";
 import { ProductPrice } from "./product-price";
 import { ProductPurchasePanel } from "./product-purchase-panel";
+import { calculateDiscountPercentage } from "@/features/products/utils/product.utils";
 
 interface ProductInfoProps {
   product: Product;
@@ -21,6 +22,11 @@ export function ProductInfo({
   onColorChange,
   onVariantChange,
 }: ProductInfoProps) {
+  const discount = calculateDiscountPercentage(
+    product.price,
+    product.comparePrice,
+  );
+
   return (
     <div className="lg:sticky lg:top-28 lg:self-start">
       <Link
@@ -38,6 +44,7 @@ export function ProductInfo({
         <ProductPrice
           price={product.price}
           comparePrice={product.comparePrice}
+          discount={discount}
         />
       </div>
 

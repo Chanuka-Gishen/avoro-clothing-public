@@ -4,11 +4,11 @@ export function calculateDiscountPercentage(
   price: number,
   comparePrice?: number | null,
 ): number | null {
-  if (!comparePrice || comparePrice <= price) {
+  if (!comparePrice || price <= comparePrice) {
     return null;
   }
 
-  return Math.round(((comparePrice - price) / comparePrice) * 100);
+  return Math.round(((price - comparePrice) / comparePrice) * 100);
 }
 
 export function getPrimaryProductImage(
