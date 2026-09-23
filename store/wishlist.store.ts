@@ -1,6 +1,13 @@
-import { WishlistItem } from "@/features/wishlist/types/wishlist.types";
+import { Product } from "@/features/products/types/product.types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+
+export interface WishlistItem {
+  id: string;
+  productId: string;
+  product: Product;
+  createdAt: string;
+}
 
 interface WishlistState {
   items: WishlistItem[];

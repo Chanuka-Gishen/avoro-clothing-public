@@ -60,7 +60,12 @@ export function ProductPurchasePanel({
     (!selectedVariant.inStock || selectedVariant.availableQuantity <= 0);
 
   const cannotAddToCart =
-    addCartItemMutation.isPending || !selectedProductColor || !selectedVariant;
+    addCartItemMutation.isPending ||
+    !selectedProductColor ||
+    !selectedVariant ||
+    selectedVariantOutOfStock ||
+    quantity < 1 ||
+    quantity > (selectedVariant?.availableQuantity ?? 0);
 
   function handleColorSelect(productColorId: string) {
     onColorChange(productColorId);
@@ -83,15 +88,19 @@ export function ProductPurchasePanel({
       return;
     }
 
+    if (!selectedVariant.inStock || selectedVariant.availableQuantity <= 0) {
+      return;
+    }
+
     try {
       await addCartItemMutation.mutateAsync({
         productId: product.id,
         productColorId: selectedProductColor.id,
-        variantId: selectedVariant.id,
+        baseProductVariantId: selectedVariant.id,
         quantity,
       });
     } catch (error) {
-      console.error(error);
+      console.error("Failed to add item to cart:", error);
     }
   }
 

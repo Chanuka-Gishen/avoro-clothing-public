@@ -10,7 +10,6 @@ import {
   useRemoveCartItem,
   useUpdateCartItem,
 } from "@/features/cart/hooks/use-cart";
-import { getPrimaryProductImage } from "@/features/products/utils/product.utils";
 import { formatCurrency } from "@/lib/utils/currency";
 
 import { QuantitySelector } from "@/components/product/quantity-selector";
@@ -23,24 +22,22 @@ export function CartItemRow({ item }: CartItemRowProps) {
   const updateItem = useUpdateCartItem();
   const removeItem = useRemoveCartItem();
 
-  const variantImage = item.variant
-    ? getPrimaryProductImage(item.variant.images)
-    : null;
+  const price = Number(item.product.price);
+  const lineTotal = Number(item.subtotal);
 
-  const productImage = getPrimaryProductImage(item.product.images);
-
-  const image = variantImage ?? productImage;
-
-  const price = item.variant?.price ?? item.product.price;
-
-  const lineTotal = price * item.quantity;
-
-  const maxQuantity =
-    item.variant && item.variant.quantity > 0 && !item.variant.isMadeToOrder
-      ? item.variant.quantity
-      : undefined;
+  const isUpdating = updateItem.isPending;
+  const isRemoving = removeItem.isPending;
 
   function handleQuantityChange(quantity: number) {
+    if (
+      isUpdating ||
+      !item.available ||
+      quantity < 1 ||
+      quantity > item.availableQuantity
+    ) {
+      return;
+    }
+
     updateItem.mutate({
       itemId: item.id,
       payload: {
@@ -49,110 +46,122 @@ export function CartItemRow({ item }: CartItemRowProps) {
     });
   }
 
+  function handleRemove() {
+    if (isRemoving) {
+      return;
+    }
+
+    removeItem.mutate(item.id);
+  }
+
   return (
-    <article className="flex gap-4 py-6 sm:gap-6">
+    <article className="flex gap-4 border-b border-neutral-200 py-6 sm:gap-6 sm:py-8">
+      {/* Product image */}
       <Link
         href={routePaths.product(item.product.slug)}
-        className="relative size-28 shrink-0 overflow-hidden rounded-xl bg-neutral-100 sm:size-36"
+        className="relative aspect-[3/4] w-24 shrink-0 overflow-hidden bg-neutral-100 sm:w-32"
       >
-        {image?.url ? (
+        {item.image?.url ? (
           <Image
-            src={image.url}
-            alt={image.alt ?? item.product.name}
+            src={item.image.url}
+            alt={item.product.name}
             fill
-            sizes="144px"
+            sizes="(max-width: 639px) 96px, 128px"
             className="object-cover"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-xs text-neutral-400">
-            No image
+          <div className="flex h-full items-center justify-center px-2 text-center text-[9px] font-medium uppercase tracking-[0.14em] text-neutral-400">
+            Image unavailable
           </div>
         )}
       </Link>
 
+      {/* Product information */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <div className="flex items-start justify-between gap-4">
-          <div>
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
             <Link
               href={routePaths.product(item.product.slug)}
-              className="font-medium text-neutral-950 transition hover:text-neutral-600"
+              className="block"
             >
-              {item.product.name}
+              <h3 className="text-xs font-medium uppercase leading-5 tracking-[0.04em] text-neutral-950 transition-opacity hover:opacity-60 sm:text-sm">
+                {item.product.name}
+              </h3>
             </Link>
 
-            {item.variant && (
-              <>
-                <p className="mt-1 text-sm text-neutral-500">
-                  {item.variant.name}
-                </p>
+            {/* Color + Size */}
+            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5">
+              <div className="flex items-center gap-2">
+                <span
+                  className="size-3.5 shrink-0 border border-black/10"
+                  style={{
+                    backgroundColor: item.productColor.color.hexCode,
+                  }}
+                  aria-hidden="true"
+                />
 
-                {!!item.variant.colors.length && (
-                  <div className="mt-2 flex items-center gap-2">
-                    <div className="flex gap-1">
-                      {item.variant.colorHexCodes.map((hex, index) => (
-                        <span
-                          key={`${hex}-${index}`}
-                          title={item.variant?.colors[index]}
-                          className="size-4 rounded-full border border-black/10"
-                          style={{
-                            backgroundColor: hex,
-                          }}
-                        />
-                      ))}
-                    </div>
+                <span className="text-[10px] uppercase tracking-[0.12em] text-neutral-500">
+                  {item.productColor.color.name}
+                </span>
+              </div>
 
-                    <span className="text-xs text-neutral-500">
-                      {item.variant.colors.join(" + ")}
-                    </span>
-                  </div>
-                )}
-              </>
-            )}
+              <span
+                className="hidden h-3 w-px bg-neutral-200 sm:block"
+                aria-hidden="true"
+              />
+
+              <span className="text-[10px] uppercase tracking-[0.12em] text-neutral-500">
+                Size {item.baseProductVariant.size.name}
+              </span>
+            </div>
+
+            {/* SKU */}
+            <p className="mt-2 text-[9px] uppercase tracking-[0.12em] text-neutral-400">
+              SKU {item.baseProductVariant.sku}
+            </p>
           </div>
 
+          {/* Remove */}
           <button
             type="button"
-            onClick={() => removeItem.mutate(item.id)}
-            disabled={removeItem.isPending}
-            aria-label={`Remove ${item.product.name}`}
-            className="flex size-9 shrink-0 items-center justify-center rounded-lg text-neutral-400 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
+            onClick={handleRemove}
+            disabled={isRemoving}
+            aria-label={`Remove ${item.product.name} from bag`}
+            className="flex size-8 shrink-0 items-center justify-center text-neutral-400 transition-colors hover:text-neutral-950 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            <Trash2 className="size-4" />
+            <Trash2 className="size-4" strokeWidth={1.4} aria-hidden="true" />
           </button>
         </div>
 
-        {item.variant?.isMadeToOrder && item.variant.quantity <= 0 && (
-          <div className="mt-3">
-            <p className="text-xs font-medium text-amber-700">Made to order</p>
-
-            {(item.variant.productionDaysMin != null ||
-              item.variant.productionDaysMax != null) && (
-              <p className="mt-1 text-xs text-neutral-500">
-                Production:{" "}
-                {formatProductionTime(
-                  item.variant.productionDaysMin,
-                  item.variant.productionDaysMax,
-                )}
-              </p>
-            )}
-          </div>
+        {/* Stock status */}
+        {!item.available && (
+          <p className="mt-3 text-[9px] font-medium uppercase tracking-[0.14em] text-red-600">
+            Currently unavailable
+          </p>
         )}
 
-        <div className="mt-auto flex flex-wrap items-end justify-between gap-4 pt-5">
+        {item.available && !item.hasEnoughStock && (
+          <p className="mt-3 text-[9px] font-medium uppercase tracking-[0.14em] text-red-600">
+            Only {item.availableQuantity} available
+          </p>
+        )}
+
+        {/* Quantity + Price */}
+        <div className="mt-auto flex items-end justify-between gap-4 pt-5">
           <QuantitySelector
             value={item.quantity}
-            max={maxQuantity}
+            max={item.availableQuantity}
             onChange={handleQuantityChange}
           />
 
-          <div className="text-right">
+          <div className="shrink-0 text-right">
             {item.quantity > 1 && (
-              <p className="text-xs text-neutral-400">
+              <p className="text-[9px] uppercase tracking-[0.1em] text-neutral-400">
                 {formatCurrency(price)} each
               </p>
             )}
 
-            <p className="mt-1 font-semibold text-neutral-950">
+            <p className="mt-1 text-sm font-medium text-neutral-950">
               {formatCurrency(lineTotal)}
             </p>
           </div>
@@ -160,20 +169,4 @@ export function CartItemRow({ item }: CartItemRowProps) {
       </div>
     </article>
   );
-}
-
-function formatProductionTime(min?: number | null, max?: number | null) {
-  if (min != null && max != null) {
-    return `${min}–${max} days`;
-  }
-
-  if (min != null) {
-    return `from ${min} days`;
-  }
-
-  if (max != null) {
-    return `up to ${max} days`;
-  }
-
-  return "Contact us";
 }
