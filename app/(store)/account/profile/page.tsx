@@ -50,7 +50,7 @@ export default function ProfilePage() {
             </dd>
           </div>
 
-          <div>
+          {/* <div>
             <dt className="text-xs font-medium uppercase tracking-wide text-neutral-400">
               Mobile status
             </dt>
@@ -58,7 +58,7 @@ export default function ProfilePage() {
             <dd className="mt-1 text-sm text-neutral-950">
               {user.isMobileVerified ? "Verified" : "Not verified"}
             </dd>
-          </div>
+          </div> */}
         </dl>
         <div className="mt-8 space-y-4">
           <CustomerVerificationCard
@@ -67,11 +67,11 @@ export default function ProfilePage() {
             verified={user.isEmailVerified}
           />
 
-          <CustomerVerificationCard
+          {/* <CustomerVerificationCard
             type="mobile"
             value={user.mobile}
             verified={user.isMobileVerified}
-          />
+          /> */}
         </div>
       </div>
     </div>

@@ -2,7 +2,9 @@ import {
   Product,
   ProductSummary,
 } from "@/features/products/types/product.types";
-import { WishlistItem } from "@/features/wishlist/types/wishlist.types";
+import { WishlistItem } from "@/store/wishlist.store";
+
+export const DELIVERY_CHARGERS = 400;
 
 export function toWishlistItem(
   product: Product | ProductSummary,
@@ -14,17 +16,8 @@ export function toWishlistItem(
 
   return {
     id: product.id,
-    name: product.name,
-    slug: product.slug,
-
-    price: product.price,
-    comparePrice: product.comparePrice,
-
-    image: image
-      ? {
-          url: image.url,
-          alt: image.alt,
-        }
-      : null,
+    product: product as Product,
+    productId: product.id,
+    createdAt: product.createdAt,
   };
 }

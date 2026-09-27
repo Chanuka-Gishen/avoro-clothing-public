@@ -42,7 +42,7 @@ export function OrderCard({ order }: OrderCardProps) {
 
       <div className="mt-5 flex items-center justify-between border-t border-neutral-100 pt-4">
         <span className="text-sm text-neutral-500">
-          {order._count.items} items
+          {order.itemCount} items
         </span>
 
         <span className="font-semibold text-neutral-950">

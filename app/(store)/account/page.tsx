@@ -21,20 +21,17 @@ export default function AccountPage() {
       <p className="text-sm font-medium uppercase tracking-[0.16em] text-neutral-500">
         Account
       </p>
-
       <h2 className="mt-2 text-3xl font-semibold tracking-tight text-neutral-950">
         Hello, {user.firstName}
       </h2>
-
       <p className="mt-3 text-neutral-500">
         Manage your account information and view your orders.
       </p>
-
       <div className="mt-8">
         <AccountStatus user={user} />
       </div>
-
-      {(!user.isEmailVerified || !user.isMobileVerified) && (
+      {/* //TODO - mobile verification check */}
+      {!user.isEmailVerified && (
         <div className="mt-6 space-y-4">
           {!user.isEmailVerified && (
             <CustomerVerificationCard
@@ -44,16 +41,15 @@ export default function AccountPage() {
             />
           )}
 
-          {!user.isMobileVerified && (
+          {/* {!user.isMobileVerified && (
             <CustomerVerificationCard
               type="mobile"
               value={user.mobile}
               verified={false}
             />
-          )}
+          )} */}
         </div>
       )}
-
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <Link
           href={ROUTES.ACCOUNT_ORDERS}

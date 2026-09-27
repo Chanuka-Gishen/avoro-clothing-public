@@ -1,6 +1,5 @@
-import { CheckoutForm } from "@/components/checkout/checkout-form";
-import { CheckoutSummary } from "@/components/checkout/checkout-summary";
 import type { Metadata } from "next";
+import { CheckoutForm } from "@/components/checkout/checkout-form";
 
 export const metadata: Metadata = {
   title: "Checkout",
@@ -19,11 +18,7 @@ export default function CheckoutPage() {
         </h1>
       </div>
 
-      <div className="grid gap-12 lg:grid-cols-[1fr_380px]">
-        <CheckoutForm />
-
-        <CheckoutSummary />
-      </div>
+      <CheckoutForm />
     </div>
   );
 }

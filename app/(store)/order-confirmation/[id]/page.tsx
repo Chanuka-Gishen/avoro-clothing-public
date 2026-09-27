@@ -89,14 +89,14 @@ export default function OrderConfirmationPage() {
               ? `/account/orders/${order.id}`
               : `/guest/orders/${order.id}`
           }
-          className="flex h-11 flex-1 items-center justify-center rounded-lg bg-neutral-950 px-5 text-sm font-medium text-white"
+          className="flex flex-1 items-center justify-center rounded-lg bg-neutral-950 px-5 py-3 text-sm font-medium text-white"
         >
           View order
         </Link>
 
         <Link
           href={ROUTES.SHOP}
-          className="flex h-11 flex-1 items-center justify-center rounded-lg border border-neutral-300 px-5 text-sm font-medium text-neutral-700"
+          className="flex flex-1 items-center justify-center rounded-lg border border-neutral-300 px-5 py-3 text-sm font-medium text-neutral-700"
         >
           Continue shopping
         </Link>
