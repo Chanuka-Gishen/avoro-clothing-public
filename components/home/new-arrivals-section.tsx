@@ -15,7 +15,7 @@ export function NewArrivalsSection({ products }: NewArrivalsSectionProps) {
 
   return (
     <section className="bg-neutral-50" aria-labelledby="new-arrivals-heading">
-      <div className="mx-auto max-w-[1600px] px-5 py-20 sm:px-8 lg:px-12 lg:py-8 xl:px-16">
+      <div className="mx-auto max-w-[1600px] px-5 py-5 sm:px-8 lg:px-12 lg:py-8 xl:px-16">
         <div className="mb-10 flex items-end justify-between gap-6 lg:mb-12">
           <div>
             <p className="text-[10px] font-medium uppercase tracking-[0.35em] text-neutral-500 sm:text-xs">

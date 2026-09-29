@@ -18,7 +18,7 @@ export function FeaturedProductsSection({
 
   return (
     <section
-      className="mx-auto max-w-[1600px] px-5 py-20 sm:px-8 lg:px-12 lg:py-8 xl:px-16"
+      className="mx-auto max-w-[1600px] px-5 py-5 sm:px-8 lg:px-12 lg:py-8 xl:px-16"
       aria-labelledby="featured-products-heading"
     >
       <div className="mb-10 flex items-end justify-between gap-6 lg:mb-12">

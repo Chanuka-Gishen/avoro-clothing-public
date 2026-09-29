@@ -17,8 +17,10 @@ export const ROUTES = {
   ACCOUNT_ORDERS: "/account/orders",
   ACCOUNT_PROFILE: "/account/profile",
 
-  PRIVACY: "/privacy",
-  TERMS: "/terms",
+  PRIVACY: "/privacy-policy",
+  TERMS: "/terms-and-conditions",
+  SHIPPING: "/shipping-delivery",
+  RETURNS: "/returns-exchanges",
 } as const;
 
 export const routePaths = {

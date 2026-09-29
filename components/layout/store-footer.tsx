@@ -190,14 +190,26 @@ export function StoreFooter() {
               href={ROUTES.PRIVACY}
               className="transition-colors hover:text-neutral-300"
             >
-              Privacy
+              Privacy Policy
             </Link>
 
             <Link
               href={ROUTES.TERMS}
               className="transition-colors hover:text-neutral-300"
             >
-              Terms
+              Terms & Conditions
+            </Link>
+            <Link
+              href={ROUTES.SHIPPING}
+              className="transition-colors hover:text-neutral-300"
+            >
+              Shipping & Delivery
+            </Link>
+            <Link
+              href={ROUTES.RETURNS}
+              className="transition-colors hover:text-neutral-300"
+            >
+              Returns & Exchanges
             </Link>
           </div>
         </div>
