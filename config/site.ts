@@ -1,8 +1,6 @@
-// src/config/site.ts
-
 export const siteConfig = {
-  name: "Avoro Furniture Store",
-  description: "Premium furniture for modern living.",
+  name: "Avoro Clothing",
+  description: "Clothing for the unbound.",
 
   navigation: [
     {
@@ -20,12 +18,14 @@ export const siteConfig = {
   ],
 
   contact: {
-    phone: "",
-    email: "",
+    phone: "+94 76 077 4708",
+    email: "avoroclothing@gmail.com",
+    whatsapp: "94760774708",
   },
 
   social: {
-    facebook: "",
-    instagram: "",
+    facebook: "https://www.facebook.com/people/Avoro-Clothing/61591664553357/",
+    instagram: "https://www.instagram.com/clothingavoro",
+    tiktok: "",
   },
 } as const;

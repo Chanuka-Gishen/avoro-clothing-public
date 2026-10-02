@@ -13,9 +13,13 @@ interface AccountStatusProps {
 }
 
 export function AccountStatus({ user }: AccountStatusProps) {
-  const isActive = user.status === CustomerStatus.ACTIVE;
+  // TOFO - isActive = ACTIVE
+  const isActive =
+    user.status !== CustomerStatus.BLOCKED &&
+    user.status !== CustomerStatus.SUSPENDED;
 
-  const canOrder = isActive && user.isEmailVerified && user.isMobileVerified;
+  // TODO - add mobile verification
+  const canOrder = isActive && user.isEmailVerified;
 
   return (
     <div className="rounded-xl border border-neutral-200 p-5">
@@ -56,13 +60,13 @@ export function AccountStatus({ user }: AccountStatusProps) {
           incompleteText="Not verified"
         />
 
-        <StatusItem
+        {/* <StatusItem
           icon={Smartphone}
           label="Mobile number"
           completed={user.isMobileVerified}
           completedText="Verified"
           incompleteText="Not verified"
-        />
+        /> */}
       </div>
 
       {!canOrder && (

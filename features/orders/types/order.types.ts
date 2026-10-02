@@ -1,7 +1,4 @@
-import type {
-  ProductImage,
-  ProductVariant,
-} from "@/features/products/types/product.types";
+import type { ProductImage } from "@/features/products/types/product.types";
 
 export type OrderStatus =
   | "PENDING"
@@ -26,17 +23,45 @@ export interface OrderItem {
   productId: string;
   product: OrderProduct;
 
-  variantId?: string | null;
-  variant?: ProductVariant | null;
+  productColorId: string;
+  productColor: OrderProductColor;
 
-  isManufacturingRequired: boolean;
-  stockQuantityUsed: number;
-  newlyMadeQuantity: number;
+  baseProductVariantId: string;
+  baseProductVariant: OrderBaseProductVariant;
+
+  image: OrderItemImage | null;
 
   quantity: number;
   price: number;
 
   createdAt: string;
+}
+
+export interface OrderProductColor {
+  id: string;
+
+  color: {
+    id: string;
+    name: string;
+    code: string;
+    hexCode: string;
+  };
+}
+
+export interface OrderBaseProductVariant {
+  id: string;
+  sku: string;
+
+  size: {
+    id: string;
+    name: string;
+    code: string;
+  };
+}
+
+export interface OrderItemImage {
+  url: string;
+  alt?: string | null;
 }
 
 export interface Order {
@@ -46,9 +71,9 @@ export interface Order {
   items: OrderItem[];
 
   subtotal: number;
-  tax: number;
-  shipping: number;
-  discount: number;
+  taxTotal: number;
+  deliveryCharge: number;
+  discountTotal: number;
   total: number;
 
   status: OrderStatus;
@@ -86,10 +111,9 @@ export interface OrderListItem {
 
   subtotal: number;
   total: number;
+  deliverCharge: number;
 
   createdAt: string;
 
-  _count: {
-    items: number;
-  };
+  itemCount: number;
 }

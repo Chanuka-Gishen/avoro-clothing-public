@@ -15,7 +15,18 @@ export function CartSummary({ cart }: CartSummaryProps) {
 
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
+  const subtotal = Number(cart.subtotal);
+  const itemCount = cart.itemCount;
+
+  const canCheckout =
+    cart.items.length > 0 &&
+    cart.items.every((item) => item.available && item.hasEnoughStock);
+
   function handleCheckout() {
+    if (!canCheckout) {
+      return;
+    }
+
     if (isAuthenticated) {
       router.push(ROUTES.CHECKOUT);
       return;
@@ -26,71 +37,87 @@ export function CartSummary({ cart }: CartSummaryProps) {
     );
   }
 
-  const subtotal = cart.items.reduce((total, item) => {
-    const price = item.variant?.price ?? item.product.price;
-
-    return total + price * item.quantity;
-  }, 0);
-
-  const itemCount = cart.items.reduce(
-    (total, item) => total + item.quantity,
-    0,
-  );
-
   return (
     <aside>
-      <div className="sticky top-28 rounded-2xl border border-neutral-200 p-6">
-        <h2 className="text-lg font-semibold text-neutral-950">
-          Order summary
-        </h2>
+      <div className="sticky top-28 border border-neutral-200 bg-white p-5 sm:p-6">
+        {/* Heading */}
+        <div className="border-b border-neutral-200 pb-5">
+          <p className="text-[9px] font-medium uppercase tracking-[0.24em] text-neutral-400">
+            AVORO / Bag
+          </p>
 
-        <div className="mt-6 space-y-4">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-neutral-500">Items ({itemCount})</span>
+          <h2 className="mt-2 text-lg font-medium uppercase tracking-[-0.01em] text-neutral-950">
+            Order summary
+          </h2>
+        </div>
 
-            <span className="font-medium text-neutral-950">
+        {/* Summary */}
+        <div className="space-y-4 py-6">
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-[11px] uppercase tracking-[0.1em] text-neutral-500">
+              Items ({itemCount})
+            </span>
+
+            <span className="text-sm font-medium text-neutral-950">
               {formatCurrency(subtotal)}
             </span>
           </div>
 
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-neutral-500">Shipping</span>
+          <div className="flex items-start justify-between gap-4">
+            <span className="text-[11px] uppercase tracking-[0.1em] text-neutral-500">
+              Delivery
+            </span>
 
-            <span className="text-neutral-500">Calculated at checkout</span>
-          </div>
-
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-neutral-500">Tax</span>
-
-            <span className="text-neutral-500">Calculated at checkout</span>
+            <span className="text-right text-[11px] text-neutral-500">
+              Calculated at checkout
+            </span>
           </div>
         </div>
 
-        <div className="mt-6 border-t border-neutral-200 pt-5">
-          <div className="flex items-center justify-between">
-            <span className="font-medium text-neutral-950">Subtotal</span>
+        {/* Total */}
+        <div className="border-t border-neutral-200 pt-5">
+          <div className="flex items-end justify-between gap-4">
+            <span className="text-xs font-semibold uppercase tracking-[0.12em] text-neutral-950">
+              Subtotal
+            </span>
 
-            <span className="text-lg font-semibold text-neutral-950">
+            <span className="text-lg font-medium text-neutral-950">
               {formatCurrency(subtotal)}
             </span>
           </div>
 
-          <p className="mt-2 text-xs leading-5 text-neutral-500">
-            Shipping and taxes will be calculated during checkout.
+          <p className="mt-2 text-[10px] leading-4 text-neutral-400">
+            Delivery charges will be calculated during checkout.
           </p>
         </div>
 
+        {/* Stock warning */}
+        {!canCheckout && cart.items.length > 0 && (
+          <div className="mt-5 border border-red-200 bg-red-50 px-4 py-3">
+            <p className="text-[10px] font-medium uppercase tracking-[0.1em] text-red-700">
+              Your bag contains unavailable items or quantities.
+            </p>
+
+            <p className="mt-1 text-[10px] leading-4 text-red-600">
+              Update your bag before proceeding to checkout.
+            </p>
+          </div>
+        )}
+
+        {/* Checkout */}
         <button
           type="button"
           onClick={handleCheckout}
-          className="mt-3 h-12 w-full rounded-lg bg-neutral-950 px-6 text-sm font-medium text-white hover:bg-neutral-800"
+          disabled={!canCheckout}
+          className="mt-6 flex h-12 w-full items-center justify-center bg-neutral-950 px-6 text-[11px] font-semibold uppercase tracking-[0.16em] text-white transition-colors hover:bg-neutral-800 disabled:cursor-not-allowed disabled:bg-neutral-200 disabled:text-neutral-400"
         >
           Proceed to checkout
         </button>
 
+        {/* Continue shopping */}
         <Link
           href={ROUTES.SHOP}
-          className="mt-3 flex h-11 w-full items-center justify-center rounded-lg border border-neutral-300 text-sm font-medium text-neutral-700 transition hover:border-neutral-950 hover:text-neutral-950"
+          className="mt-3 flex h-12 w-full items-center justify-center border border-neutral-300 bg-white px-6 text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-950 transition-colors hover:border-neutral-950"
         >
           Continue shopping
         </Link>

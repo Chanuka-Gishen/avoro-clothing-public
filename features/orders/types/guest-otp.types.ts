@@ -1,9 +1,18 @@
-export interface SendGuestOtpPayload {
+export interface SendGuestMobileOtpPayload {
   mobile: string;
 }
 
-export interface VerifyGuestOtpPayload {
+export interface SendGuestEmailOtpPayload {
+  email: string;
+}
+
+export interface VerifyGuestMobileOtpPayload {
   mobile: string;
+  code: string;
+}
+
+export interface VerifyGuestEmaileOtpPayload {
+  email: string;
   code: string;
 }
 

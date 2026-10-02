@@ -1,22 +1,25 @@
-// src/components/product/product-info.tsx
-
-import Link from "next/link";
-
 import { routePaths } from "@/config/routes";
-import type { Product } from "@/features/products/types/product.types";
-import { calculateDiscountPercentage } from "@/features/products/utils/product.utils";
-
+import { Product } from "@/features/products/types/product.types";
+import Link from "next/link";
+import { ProductPrice } from "./product-price";
 import { ProductPurchasePanel } from "./product-purchase-panel";
+import { calculateDiscountPercentage } from "@/features/products/utils/product.utils";
 
 interface ProductInfoProps {
   product: Product;
+
+  selectedProductColorId: string | null;
   selectedVariantId: string | null;
+
+  onColorChange: (productColorId: string) => void;
   onVariantChange: (variantId: string) => void;
 }
 
 export function ProductInfo({
   product,
+  selectedProductColorId,
   selectedVariantId,
+  onColorChange,
   onVariantChange,
 }: ProductInfoProps) {
   const discount = calculateDiscountPercentage(
@@ -25,92 +28,136 @@ export function ProductInfo({
   );
 
   return (
-    <div className="lg:py-4">
+    <div className="lg:sticky lg:top-28 lg:self-start">
       <Link
         href={routePaths.category(product.category.slug)}
-        className="text-sm font-medium uppercase tracking-[0.16em] text-neutral-500 transition hover:text-neutral-950"
+        className="text-[10px] font-medium uppercase tracking-[0.28em] text-neutral-400 transition-colors hover:text-neutral-950"
       >
         {product.category.name}
       </Link>
 
-      <h1 className="mt-3 text-3xl font-semibold tracking-tight text-neutral-950 sm:text-4xl">
-        {`${product.name} - ${product.material.name}`}
+      <h1 className="mt-4 max-w-xl text-3xl font-medium uppercase leading-[1.05] tracking-[-0.03em] text-neutral-950 sm:text-4xl xl:text-[44px]">
+        {product.name}
       </h1>
 
-      {/* <div className="mt-5 flex items-center gap-3">
+      <div className="mt-5">
         <ProductPrice
           price={product.price}
           comparePrice={product.comparePrice}
+          discount={discount}
         />
-
-        {discount !== null && (
-          <span className="rounded-full bg-neutral-950 px-2.5 py-1 text-xs font-medium text-white">
-            Save {discount}%
-          </span>
-        )}
-      </div> */}
-
-      <div className="mt-7 border-t border-neutral-200 pt-7">
-        <p className="leading-7 text-neutral-600">{product.description}</p>
       </div>
 
-      <ProductPurchasePanel
-        product={product}
-        selectedVariantId={selectedVariantId}
-        onVariantChange={onVariantChange}
-      />
+      {(product.baseProduct.fit ||
+        product.baseProduct.gsm ||
+        product.baseProduct.material) && (
+        <div className="mt-5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] font-medium uppercase tracking-[0.15em] text-neutral-400">
+          {product.baseProduct.fit && <span>{product.baseProduct.fit}</span>}
 
-      {product.material && (
-        <div className="mt-7 border-t border-neutral-200 pt-7">
-          <p className="text-sm text-neutral-500">Material</p>
+          {product.baseProduct.fit && product.baseProduct.gsm && (
+            <span aria-hidden="true">/</span>
+          )}
 
-          <p className="mt-1 font-medium text-neutral-950">
-            {product.material.name}
+          {product.baseProduct.gsm && (
+            <span>{product.baseProduct.gsm} GSM</span>
+          )}
+
+          {(product.baseProduct.fit || product.baseProduct.gsm) &&
+            product.baseProduct.material && <span aria-hidden="true">/</span>}
+
+          {product.baseProduct.material && (
+            <span>{product.baseProduct.material}</span>
+          )}
+        </div>
+      )}
+
+      {product.description && (
+        <div className="mt-8 border-t border-black/10 pt-7">
+          <p className="max-w-lg text-sm leading-7 text-neutral-600">
+            {product.description}
           </p>
         </div>
       )}
 
-      {product.dimensions && (
-        <div className="mt-7 border-t border-neutral-200 pt-7">
-          <h2 className="text-sm font-semibold text-neutral-950">Dimensions</h2>
+      <ProductPurchasePanel
+        product={product}
+        selectedProductColorId={selectedProductColorId}
+        selectedVariantId={selectedVariantId}
+        onColorChange={onColorChange}
+        onVariantChange={onVariantChange}
+      />
 
-          <div className="mt-3 grid grid-cols-2 gap-3 text-sm text-neutral-600">
-            {product.dimensions.length != null && (
-              <p>
-                Length: {product.dimensions.length} {product.dimensions.unit}
-              </p>
-            )}
+      <div className="mt-9 border-t border-black/10">
+        <ProductDetailRow
+          label="Material"
+          value={product.baseProduct.material}
+        />
 
-            {product.dimensions.width != null && (
-              <p>
-                Width: {product.dimensions.width} {product.dimensions.unit}
-              </p>
-            )}
+        {product.baseProduct.fabricComposition && (
+          <ProductDetailRow
+            label="Composition"
+            value={product.baseProduct.fabricComposition}
+          />
+        )}
 
-            {product.dimensions.height != null && (
-              <p>
-                Height: {product.dimensions.height} {product.dimensions.unit}
-              </p>
-            )}
-          </div>
-        </div>
-      )}
+        {product.baseProduct.gsm != null && (
+          <ProductDetailRow
+            label="Weight"
+            value={`${product.baseProduct.gsm} GSM`}
+          />
+        )}
+
+        {product.baseProduct.fit && (
+          <ProductDetailRow label="Fit" value={product.baseProduct.fit} />
+        )}
+      </div>
 
       {product.careInstructions && (
-        <div className="mt-7 border-t border-neutral-200 pt-7">
-          <h2 className="text-sm font-semibold text-neutral-950">
-            Care instructions
+        <div className="border-t border-black/10 py-6">
+          <h2 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-neutral-950">
+            Care Instructions
           </h2>
 
-          <p className="mt-2 text-sm leading-6 text-neutral-600">
+          <p className="mt-3 max-w-lg whitespace-pre-line text-sm leading-6 text-neutral-500">
             {product.careInstructions}
           </p>
         </div>
       )}
 
-      <div className="mt-7 border-t border-neutral-200 pt-7 text-sm text-neutral-500">
-        <p>SKU: {product.sku}</p>
+      <div className="border-t border-black/10 py-6">
+        <div className="flex items-center justify-between gap-6">
+          <span className="text-[10px] uppercase tracking-[0.18em] text-neutral-400">
+            Product code
+          </span>
+
+          <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-neutral-700">
+            {product.sku}
+          </span>
+        </div>
       </div>
+    </div>
+  );
+}
+
+interface ProductDetailRowProps {
+  label: string;
+  value?: string | null;
+}
+
+function ProductDetailRow({ label, value }: ProductDetailRowProps) {
+  if (!value) {
+    return null;
+  }
+
+  return (
+    <div className="flex items-center justify-between gap-8 border-b border-black/10 py-4">
+      <span className="text-[10px] uppercase tracking-[0.18em] text-neutral-400">
+        {label}
+      </span>
+
+      <span className="text-right text-xs font-medium uppercase tracking-[0.08em] text-neutral-800">
+        {value}
+      </span>
     </div>
   );
 }

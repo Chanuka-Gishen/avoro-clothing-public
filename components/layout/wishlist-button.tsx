@@ -4,18 +4,11 @@ import { Heart } from "lucide-react";
 import Link from "next/link";
 
 import { ROUTES } from "@/config/routes";
-import { useAuthStore } from "@/features/auth/store/auth.store";
-import { useWishlist } from "@/features/wishlist/hooks/use-wishlist";
+import { useWishlistStore } from "@/store/wishlist.store";
 
 export function WishlistButton() {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-
-  const isInitialized = useAuthStore((state) => state.isInitialized);
-
-  const { data } = useWishlist();
-
-  const count =
-    isInitialized && isAuthenticated ? (data?.response?.items.length ?? 0) : 0;
+  const items = useWishlistStore((state) => state.items);
+  const count = items.length;
 
   return (
     <Link

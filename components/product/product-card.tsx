@@ -1,162 +1,139 @@
 "use client";
 
-import { Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
-import { routePaths, ROUTES } from "@/config/routes";
-import { useAuthStore } from "@/features/auth/store/auth.store";
+import { routePaths } from "@/config/routes";
 import type { ProductSummary } from "@/features/products/types/product.types";
 import { calculateDiscountPercentage } from "@/features/products/utils/product.utils";
-import {
-  useAddWishlistItem,
-  useRemoveWishlistItem,
-  useWishlist,
-} from "@/features/wishlist/hooks/use-wishlist";
 
 import { ProductPrice } from "./product-price";
+import { WishlistButton } from "../wishlist/wishlist-button";
+import { toWishlistItem } from "@/lib/utils/common.utils";
 
 interface ProductCardProps {
   product: ProductSummary;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const router = useRouter();
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-
-  const isInitialized = useAuthStore((state) => state.isInitialized);
-
-  const { data: wishlistData } = useWishlist();
-
-  const addWishlistItem = useAddWishlistItem();
-  const removeWishlistItem = useRemoveWishlistItem();
-
   const discount = calculateDiscountPercentage(
     product.price,
     product.comparePrice,
   );
 
-  const wishlist = wishlistData?.response;
+  const primaryImage =
+    product.images?.[0] ??
+    product.colors?.find((item) => item.images?.length)?.images?.[0] ??
+    null;
 
-  const isWishlisted =
-    wishlist?.items.some((item) => item.product?.id === product.id) ?? false;
-
-  const isWishlistPending =
-    addWishlistItem.isPending || removeWishlistItem.isPending;
-
-  async function handleWishlistClick() {
-    if (!isInitialized || isWishlistPending) {
-      return;
-    }
-
-    if (!isAuthenticated) {
-      router.push(ROUTES.LOGIN);
-      return;
-    }
-
-    try {
-      if (isWishlisted) {
-        await removeWishlistItem.mutateAsync(product.id);
-        return;
-      }
-
-      await addWishlistItem.mutateAsync({
-        productId: product.id,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }
+  const visibleColors = product.colors?.slice(0, 4) ?? [];
+  const remainingColors = Math.max(
+    (product.colors?.length ?? 0) - visibleColors.length,
+    0,
+  );
 
   return (
     <article className="group">
-      <div className="relative overflow-hidden rounded-xl bg-neutral-100">
-        <Link href={routePaths.product(product.slug)}>
-          <div className="relative aspect-square">
-            {product.images?.length > 0 ? (
+      <div className="relative overflow-hidden bg-[#f3f3f1]">
+        <Link
+          href={routePaths.product(product.slug)}
+          className="block"
+          aria-label={`View ${product.name}`}
+        >
+          <div className="relative aspect-[3/4] overflow-hidden">
+            {primaryImage ? (
               <Image
-                src={product.images[0].url}
-                alt={product.images[0].alt || product.name}
+                src={primaryImage.url}
+                alt={primaryImage.alt || product.name}
                 fill
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.025]"
               />
             ) : (
-              <div className="flex h-full items-center justify-center text-sm text-neutral-400">
-                No image
+              <div className="flex h-full items-center justify-center">
+                <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-neutral-400">
+                  Image unavailable
+                </span>
               </div>
             )}
           </div>
         </Link>
 
         {discount !== null && (
-          <span className="absolute left-3 top-3 rounded-full bg-neutral-950 px-2.5 py-1 text-xs font-medium text-white">
-            -{discount}%
+          <span className="absolute left-0 top-0 bg-neutral-950 px-3 py-2 text-[9px] font-semibold uppercase tracking-[0.16em] text-white sm:px-4 sm:text-[10px]">
+            {discount}% off
           </span>
         )}
 
-        <button
-          type="button"
-          onClick={handleWishlistClick}
-          disabled={!isInitialized || isWishlistPending}
-          aria-pressed={isWishlisted}
-          aria-label={
-            isWishlisted
-              ? `Remove ${product.name} from wishlist`
-              : `Add ${product.name} to wishlist`
-          }
-          className="absolute right-3 top-3 flex size-9 items-center justify-center rounded-full bg-white shadow-sm transition hover:bg-neutral-100 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          <Heart
-            className={
-              isWishlisted
-                ? "size-4 fill-red-500 text-red-500"
-                : "size-4 text-neutral-700"
-            }
-          />
-        </button>
+        <WishlistButton
+          wishlistItem={toWishlistItem(product)}
+          variant="icon"
+          className="absolute right-3 top-3 flex size-9 items-center justify-center text-neutral-950 transition-all duration-300 hover:scale-110 disabled:cursor-not-allowed disabled:opacity-40 sm:right-4 sm:top-4"
+        />
       </div>
 
-      <div className="mt-4">
-        {product.category && (
-          <Link
-            href={routePaths.category(product.category.slug)}
-            className="text-xs font-medium uppercase tracking-wide text-neutral-400 hover:text-neutral-700"
-          >
-            {product.category.name}
+      <div className="pt-4">
+        <div>
+          <Link href={routePaths.product(product.slug)} className="block">
+            <h3 className="text-[13px] font-medium uppercase leading-5 tracking-[0.04em] text-neutral-950 transition-opacity duration-300 group-hover:opacity-60 sm:text-sm">
+              {product.name}
+            </h3>
           </Link>
-        )}
 
-        <Link href={routePaths.product(product.slug)} className="mt-1 block">
-          <h3 className="text-sm font-medium text-neutral-900 transition-colors hover:text-neutral-600">
-            {product.name}
-          </h3>
-        </Link>
+          <div className="mt-1">
+            <ProductPrice
+              price={product.price}
+              comparePrice={product.comparePrice}
+              discount={discount}
+            />
+          </div>
 
-        <div className="mt-2">
-          <ProductPrice
-            price={product.price}
-            comparePrice={product.comparePrice}
-          />
+          {product.category && (
+            <Link
+              href={routePaths.collection(product.category.slug)}
+              className="mt-1.5 block w-fit text-[9px] font-medium uppercase tracking-[0.22em] text-neutral-400 transition-colors hover:text-neutral-950 sm:text-[10px]"
+            >
+              {product.category.name}
+            </Link>
+          )}
         </div>
 
-        {!!product.variants?.length && (
-          <div className="mt-3 flex items-center gap-1.5">
-            {product.variants.slice(0, 5).map((variant) => (
+        {(product.baseProduct?.fit || product.baseProduct?.gsm) && (
+          <p className="mt-1.5 text-[10px] uppercase tracking-[0.12em] text-neutral-400">
+            {[
+              product.baseProduct?.fit,
+              product.baseProduct?.gsm
+                ? `${product.baseProduct.gsm} GSM`
+                : null,
+            ]
+              .filter(Boolean)
+              .join(" / ")}
+          </p>
+        )}
+
+        {!!visibleColors.length && (
+          <div
+            className="mt-3 flex items-center gap-2"
+            aria-label={`${product.colors.length} available colors`}
+          >
+            {visibleColors.map((productColor) => (
               <span
-                key={variant.id}
-                title={variant.name}
-                className="size-4 rounded-full border border-neutral-300"
-                style={{
-                  backgroundColor: variant.colorHexCodes[0] || undefined,
-                }}
-              />
+                key={productColor.id}
+                title={productColor.color.name}
+                className="relative flex size-[15px] items-center justify-center"
+              >
+                <span
+                  className="size-[11px] rounded-full border border-black/10"
+                  style={{
+                    backgroundColor: productColor.color.hexCode,
+                  }}
+                />
+              </span>
             ))}
 
-            {product.variants.length > 5 && (
-              <span className="ml-1 text-xs text-neutral-400">
-                +{product.variants.length - 5}
+            {remainingColors > 0 && (
+              <span className="ml-0.5 text-[10px] font-medium tracking-wide text-neutral-400">
+                +{remainingColors}
               </span>
             )}
           </div>

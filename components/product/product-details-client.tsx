@@ -12,34 +12,52 @@ interface ProductDetailsClientProps {
 }
 
 export function ProductDetailsClient({ product }: ProductDetailsClientProps) {
-  const orderableVariants = useMemo(
-    () => product.variants.filter((variant) => variant.isOrderable),
-    [product.variants],
+  const activeColors = useMemo(
+    () => product.colors.filter((productColor) => productColor.isActive),
+    [product.colors],
   );
+
+  const [selectedProductColorId, setSelectedProductColorId] = useState<
+    string | null
+  >(activeColors[0]?.id ?? null);
 
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(
-    orderableVariants.length === 1 ? orderableVariants[0].id : null,
+    null,
   );
 
-  const selectedVariant =
-    orderableVariants.find((variant) => variant.id === selectedVariantId) ??
-    null;
+  const selectedProductColor =
+    activeColors.find(
+      (productColor) => productColor.id === selectedProductColorId,
+    ) ?? null;
 
   const galleryImages = useMemo(() => {
-    if (!selectedVariant) {
+    if (!selectedProductColor) {
       return product.images;
     }
 
-    return [...selectedVariant.images, ...product.images];
-  }, [product.images, selectedVariant]);
+    const colorImages = selectedProductColor.images ?? [];
+
+    if (!colorImages.length) {
+      return product.images;
+    }
+
+    return [...colorImages, ...product.images];
+  }, [product.images, selectedProductColor]);
+
+  function handleColorChange(productColorId: string) {
+    setSelectedProductColorId(productColorId);
+    setSelectedVariantId(null);
+  }
 
   return (
-    <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
+    <div className="grid gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(380px,0.85fr)] lg:gap-16 xl:gap-24">
       <ProductGallery images={galleryImages} productName={product.name} />
 
       <ProductInfo
         product={product}
+        selectedProductColorId={selectedProductColorId}
         selectedVariantId={selectedVariantId}
+        onColorChange={handleColorChange}
         onVariantChange={setSelectedVariantId}
       />
     </div>

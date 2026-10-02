@@ -4,6 +4,7 @@ import { buildQueryParams } from "@/lib/api/query-params";
 import type { Product, ProductListParams } from "../types/product.types";
 
 import type { ApiResponse, PaginatedResponse } from "@/types/api.types";
+import { cache } from "react";
 
 export async function getProducts(
   params: ProductListParams = {},
@@ -16,14 +17,26 @@ export async function getProducts(
     material: params.materialSlug,
     minPrice: params.minPrice,
     maxPrice: params.maxPrice,
-    featured: params.featured,
-    sort: params.sort,
+    isFeatured: params.isFeatured,
+    sortBy: params.sort,
   });
 
   return serverFetch<PaginatedResponse<Product>>(`/products${query}`, {
     cache: "no-store",
   });
 }
+
+export async function getProductsSeoInfo(): Promise<ApiResponse<Product[]>> {
+  return serverFetch<Product[]>(`/products/seo`, {
+    cache: "no-store",
+  });
+}
+
+export const getCachedProductBySlug = cache(async (slug: string) => {
+  const result = await getProductBySlug(slug);
+
+  return result.response ?? null;
+});
 
 export async function getProductBySlug(
   slug: string,
@@ -35,7 +48,7 @@ export async function getFeaturedProducts(limit = 8) {
   return getProducts({
     page: 1,
     limit,
-    featured: true,
+    isFeatured: true,
   });
 }
 

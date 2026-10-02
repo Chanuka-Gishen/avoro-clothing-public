@@ -2,21 +2,42 @@
 
 import { useMutation } from "@tanstack/react-query";
 
-import { sendGuestOtp, verifyGuestOtp } from "../api/guest-otp.api";
-
-import type {
-  SendGuestOtpPayload,
-  VerifyGuestOtpPayload,
+import {
+  sendGuestOtp,
+  sendGuestOtpEmail,
+  verifyGuestOtp,
+  verifyGuestOtpEmail,
+} from "../api/guest-otp.api";
+import {
+  SendGuestEmailOtpPayload,
+  SendGuestMobileOtpPayload,
+  VerifyGuestEmaileOtpPayload,
+  VerifyGuestMobileOtpPayload,
 } from "../types/guest-otp.types";
 
-export function useSendGuestOtp() {
+export function useSendGuestOtpMobile() {
   return useMutation({
-    mutationFn: (payload: SendGuestOtpPayload) => sendGuestOtp(payload),
+    mutationFn: (payload: SendGuestMobileOtpPayload) => sendGuestOtp(payload),
   });
 }
 
-export function useVerifyGuestOtp() {
+export function useSendGuestOtpEmail() {
   return useMutation({
-    mutationFn: (payload: VerifyGuestOtpPayload) => verifyGuestOtp(payload),
+    mutationFn: (payload: SendGuestEmailOtpPayload) =>
+      sendGuestOtpEmail(payload),
+  });
+}
+
+export function useVerifyGuestOtpMobile() {
+  return useMutation({
+    mutationFn: (payload: VerifyGuestMobileOtpPayload) =>
+      verifyGuestOtp(payload),
+  });
+}
+
+export function useVerifyGuestOtpEmail() {
+  return useMutation({
+    mutationFn: (payload: VerifyGuestEmaileOtpPayload) =>
+      verifyGuestOtpEmail(payload),
   });
 }
