@@ -15,6 +15,6 @@ export default function robots(): MetadataRoute.Robots {
       ],
     },
 
-    sitemap: "https://avoro.lk/sitemap.xml",
+    sitemap: "https://www.avoroclothing.lk/sitemap.xml",
   };
 }

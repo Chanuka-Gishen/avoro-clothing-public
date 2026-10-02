@@ -165,7 +165,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     offers: {
       "@type": "Offer",
 
-      url: `https://avoro.lk/products/${product.slug}`,
+      url: `https://www.avoroclothing.lk/products/${product.slug}`,
 
       priceCurrency: "LKR",
       price: product.price,

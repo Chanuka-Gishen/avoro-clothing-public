@@ -4,6 +4,8 @@ export const ROUTES = {
   HOME: "/",
   SHOP: "/shop",
 
+  COLLECTIONS: "/collections",
+
   CART: "/cart",
   CHECKOUT: "/checkout",
   WISHLIST: "/wishlist",

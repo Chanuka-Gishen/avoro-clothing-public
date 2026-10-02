@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 import { getCategoriesSeoInfo } from "@/features/categories/api/category.api";
 import { getProductsSeoInfo } from "@/features/products/api/product.api";
 
-const BASE_URL = "https://avoro.lk";
+const BASE_URL = "https://www.avoroclothing.lk";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [categoriesResult, productsResult] = await Promise.all([

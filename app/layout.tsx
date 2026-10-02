@@ -5,7 +5,7 @@ import { Providers } from "./providers";
 
 import "./globals.css";
 
-const SITE_URL = "https://avoro.lk";
+const SITE_URL = "https://www.avoroclothing.lk";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
