@@ -2,28 +2,27 @@
 
 import { Heart } from "lucide-react";
 
-import { useWishlistStore } from "@/store/wishlist.store";
-import { WishlistItem } from "@/features/wishlist/types/wishlist.types";
+import { useWishlistStore, WishlistItem } from "@/store/wishlist.store";
 
 interface WishlistButtonProps {
-  product: WishlistItem;
+  wishlistItem: WishlistItem;
   variant?: "icon" | "full";
   className?: string;
 }
 
 export function WishlistButton({
-  product,
+  wishlistItem,
   variant = "full",
   className,
 }: WishlistButtonProps) {
   const isWishlisted = useWishlistStore((state) =>
-    state.items.some((item) => item.id === product.id),
+    state.items.some((item) => item.id === wishlistItem.productId),
   );
 
   const toggleWishlistItem = useWishlistStore((state) => state.toggleItem);
 
   function handleWishlistClick() {
-    toggleWishlistItem(product);
+    toggleWishlistItem(wishlistItem);
   }
 
   if (variant === "icon") {
@@ -34,8 +33,8 @@ export function WishlistButton({
         aria-pressed={isWishlisted}
         aria-label={
           isWishlisted
-            ? `Remove ${product.name} from wishlist`
-            : `Add ${product.name} to wishlist`
+            ? `Remove ${wishlistItem.product.name} from wishlist`
+            : `Add ${wishlistItem.product.name} to wishlist`
         }
         className={
           className ??

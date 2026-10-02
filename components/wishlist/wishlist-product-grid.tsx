@@ -1,15 +1,17 @@
-import { WishlistItem } from "@/features/wishlist/types/wishlist.types";
+import { WishlistItem } from "@/store/wishlist.store";
 import { WishlistProductCard } from "./wishlist-product-card";
 
 interface WishlistProductGridProps {
-  products: WishlistItem[];
+  wishlistItems: WishlistItem[];
 }
 
-export function WishlistProductGrid({ products }: WishlistProductGridProps) {
+export function WishlistProductGrid({
+  wishlistItems,
+}: WishlistProductGridProps) {
   return (
     <div className="grid grid-cols-2 gap-x-3 gap-y-10 sm:gap-x-5 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-6 lg:gap-y-14">
-      {products.map((product) => (
-        <WishlistProductCard key={product.id} product={product} />
+      {wishlistItems.map((item) => (
+        <WishlistProductCard key={item.id} wishlistItem={item} />
       ))}
     </div>
   );

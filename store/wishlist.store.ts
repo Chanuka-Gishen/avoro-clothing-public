@@ -12,11 +12,11 @@ export interface WishlistItem {
 interface WishlistState {
   items: WishlistItem[];
 
-  addItem: (product: WishlistItem) => void;
-  removeItem: (productId: string) => void;
-  toggleItem: (product: WishlistItem) => void;
+  addItem: (wishlistItem: WishlistItem) => void;
+  removeItem: (wishlistItem: string) => void;
+  toggleItem: (wishlistItem: WishlistItem) => void;
 
-  isWishlisted: (productId: string) => boolean;
+  isWishlisted: (wishlistItem: string) => boolean;
 
   clearWishlist: () => void;
 }
@@ -26,37 +26,39 @@ export const useWishlistStore = create<WishlistState>()(
     (set, get) => ({
       items: [],
 
-      addItem: (product) => {
-        const exists = get().items.some((item) => item.id === product.id);
+      addItem: (wishlistItem) => {
+        const exists = get().items.some(
+          (item) => item.id === wishlistItem.productId,
+        );
 
         if (exists) {
           return;
         }
 
         set((state) => ({
-          items: [...state.items, product],
+          items: [...state.items, wishlistItem],
         }));
       },
 
       removeItem: (productId) => {
         set((state) => ({
-          items: state.items.filter((item) => item.id !== productId),
+          items: state.items.filter((item) => item.productId !== productId),
         }));
       },
 
-      toggleItem: (product) => {
-        const exists = get().items.some((item) => item.id === product.id);
+      toggleItem: (wishlistItem) => {
+        const exists = get().items.some((item) => item.id === wishlistItem.id);
 
         if (exists) {
           set((state) => ({
-            items: state.items.filter((item) => item.id !== product.id),
+            items: state.items.filter((item) => item.id !== wishlistItem.id),
           }));
 
           return;
         }
 
         set((state) => ({
-          items: [...state.items, product],
+          items: [...state.items, wishlistItem],
         }));
       },
 

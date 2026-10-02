@@ -66,7 +66,7 @@ export function ProductCard({ product }: ProductCardProps) {
         )}
 
         <WishlistButton
-          product={toWishlistItem(product)}
+          wishlistItem={toWishlistItem(product)}
           variant="icon"
           className="absolute right-3 top-3 flex size-9 items-center justify-center text-neutral-950 transition-all duration-300 hover:scale-110 disabled:cursor-not-allowed disabled:opacity-40 sm:right-4 sm:top-4"
         />

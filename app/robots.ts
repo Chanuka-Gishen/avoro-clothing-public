@@ -12,6 +12,10 @@ export default function robots(): MetadataRoute.Robots {
         "/wishlist/",
         "/login/",
         "/register/",
+        "/forgot-password/",
+        "/guest/",
+        "/order-confirmation/",
+        "/reset-password",
       ],
     },
 

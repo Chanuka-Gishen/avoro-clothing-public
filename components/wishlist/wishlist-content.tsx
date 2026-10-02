@@ -37,7 +37,7 @@ export function WishlistContent() {
         </div>
       </div>
 
-      <WishlistProductGrid products={items} />
+      <WishlistProductGrid wishlistItems={items} />
     </section>
   );
 }
