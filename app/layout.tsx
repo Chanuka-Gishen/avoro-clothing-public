@@ -23,12 +23,14 @@ export const metadata: Metadata = {
   keywords: [
     "AVORO",
     "AVORO clothing",
+    "AVORO Sri Lanka",
     "streetwear Sri Lanka",
     "Sri Lankan streetwear",
-    "oversized t-shirts",
-    "baggy t-shirts",
-    "premium streetwear",
-    "clothing Sri Lanka",
+    "oversized t-shirts Sri Lanka",
+    "baggy t-shirts Sri Lanka",
+    "premium streetwear Sri Lanka",
+    "men's streetwear Sri Lanka",
+    "oversized clothing Sri Lanka",
   ],
 
   authors: [{ name: "AVORO" }],
