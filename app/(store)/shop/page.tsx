@@ -7,6 +7,7 @@ import { ShopToolbar } from "@/components/shop/shop-toolbar";
 import { getCategories } from "@/features/categories/api/category.api";
 import { getProducts } from "@/features/products/api/product.api";
 import { parseProductSort } from "@/features/products/utils/product-sort.utils";
+import { Metadata } from "next";
 
 interface ShopPageProps {
   searchParams: Promise<{
@@ -18,6 +19,55 @@ interface ShopPageProps {
     sort?: string;
   }>;
 }
+
+export const metadata: Metadata = {
+  title: "Shop Streetwear & Oversized T-Shirts",
+  description:
+    "Shop AVORO streetwear, oversized T-shirts, baggy fits and premium clothing designed for the unbound. Explore the latest AVORO collection in Sri Lanka.",
+
+  alternates: {
+    canonical: "/shop",
+  },
+
+  keywords: [
+    "AVORO shop",
+    "AVORO clothing",
+    "streetwear Sri Lanka",
+    "oversized t-shirts Sri Lanka",
+    "baggy t-shirts Sri Lanka",
+    "premium streetwear Sri Lanka",
+    "oversized clothing Sri Lanka",
+  ],
+
+  openGraph: {
+    type: "website",
+    url: "/shop",
+    title: "Shop AVORO Streetwear",
+    description:
+      "Explore AVORO streetwear, oversized T-shirts and premium clothing designed for the unbound.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Shop AVORO Streetwear",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Shop AVORO Streetwear",
+    description:
+      "Explore AVORO streetwear, oversized T-shirts and premium clothing designed for the unbound.",
+    images: ["/og-image.png"],
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export default async function ShopPage({ searchParams }: ShopPageProps) {
   const params = await searchParams;
