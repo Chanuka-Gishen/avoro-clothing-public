@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
+import { createPortal } from "react-dom";
 
 interface SizeGuideModalProps {
   open: boolean;
@@ -17,6 +18,12 @@ export function SizeGuideModal({
   productName,
   onClose,
 }: SizeGuideModalProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     if (!open) {
       return;
@@ -28,33 +35,35 @@ export function SizeGuideModal({
       }
     }
 
+    const previousOverflow = document.body.style.overflow;
+
     document.addEventListener("keydown", handleKeyDown);
     document.body.style.overflow = "hidden";
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousOverflow;
     };
   }, [open, onClose]);
 
-  if (!open) {
+  if (!mounted || !open) {
     return null;
   }
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-[2px] sm:p-8"
+      className="fixed inset-0 z-[9999] flex h-[100dvh] items-center justify-center overflow-hidden bg-black/60 p-4 backdrop-blur-[2px] sm:p-8"
       role="dialog"
       aria-modal="true"
       aria-label={`${productName} size guide`}
       onClick={onClose}
     >
       <div
-        className="relative flex max-h-[90vh] w-full max-w-3xl flex-col bg-white"
+        className="relative flex max-h-[calc(100dvh-2rem)] w-full max-w-3xl flex-col overflow-hidden bg-white sm:max-h-[calc(100dvh-4rem)]"
         onClick={(event) => event.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex h-14 shrink-0 items-center justify-between border-b border-black/10 px-5 sm:px-6">
+        {/* Modal header */}
+        <div className="flex h-14 shrink-0 items-center justify-between border-b border-black/10 bg-white px-5 sm:px-6">
           <div>
             <p className="text-[9px] font-medium uppercase tracking-[0.24em] text-neutral-400">
               AVORO
@@ -76,19 +85,18 @@ export function SizeGuideModal({
         </div>
 
         {/* Size chart */}
-        <div className="overflow-y-auto p-4 sm:p-6">
-          <div className="relative mx-auto min-h-[400px] w-full">
-            <Image
-              src={image}
-              alt={`${productName} size guide`}
-              width={1200}
-              height={1600}
-              sizes="(max-width: 768px) 100vw, 768px"
-              className="h-auto w-full object-contain"
-            />
-          </div>
+        <div className="flex min-h-0 flex-1 items-center justify-center overflow-hidden p-3 sm:p-5">
+          <Image
+            src={image}
+            alt={`${productName} size guide`}
+            width={1200}
+            height={1600}
+            sizes="(max-width: 768px) calc(100vw - 32px), 768px"
+            className="h-auto w-auto max-h-[calc(100dvh-7rem)] max-w-full object-contain sm:max-h-[calc(100dvh-10rem)]"
+          />
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
